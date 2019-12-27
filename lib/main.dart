@@ -1,8 +1,14 @@
+import 'dart:core';
+
+import 'package:esense/events/NodLeftEvent.dart';
+import 'package:esense/events/NodRightEvent.dart';
+import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:esense_flutter/esense.dart';
+
+import 'Events/GenericEvent.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,20 +18,39 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  EventBus eventBus;
   String _deviceName = 'Unknown';
   double _voltage = -1;
   String _deviceStatus = '';
   bool sampling = false;
   String _event = '';
   String _button = 'not pressed';
+  List<int> previousValue = [0, 0, 0];
+  bool changed = false;
+  List<GenericChecker> checkers = [];
 
   // the name of the eSense device to connect to -- change this to your own device.
-  String eSenseName = 'eSense-0332';
+  String eSenseName = 'eSense-0708';
 
   @override
   void initState() {
     super.initState();
     _connectToESense();
+    this.eventBus = new EventBus();
+    this.checkers = this.getCheckers();
+    this.registerListeners();
+  }
+
+  List<GenericChecker> getCheckers() {
+    return [
+      new NodLeftChecker(),
+      new NodRightChecker()
+    ];
+  }
+
+  void registerListeners() {
+    this.eventBus.on<NodLeftEvent>().listen((event)=> print('NodLeftEvent'));
+    this.eventBus.on<NodRightEvent>().listen((event) => print('NodRightEvent'));
   }
 
   Future<void> _connectToESense() async {
@@ -114,10 +139,26 @@ class _MyAppState extends State<MyApp> {
   void _startListenToSensorEvents() async {
     // subscribe to sensor event from the eSense device
     subscription = ESenseManager.sensorEvents.listen((event) {
-      print('SENSOR event: $event');
+//      print('SENSOR event: $event');
+        for (var check in this.checkers) {
+        if (
+          this.changed == false
+            && check.checkOccurrence(previousValue, event.gyro)
+        ) {
+          this.eventBus.fire(check.create());
+          setState(() {
+            changed = true;
+          });
+          Timer(Duration(milliseconds: 1000), () => setState(() {
+            changed = false;
+          }));
+        }
+      }
       setState(() {
         _event = event.toString();
+        previousValue = event.gyro;
       });
+
     });
     setState(() {
       sampling = true;
