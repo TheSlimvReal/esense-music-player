@@ -4,41 +4,74 @@ class MusicPlayer {
   final String folderPath = 'assets/';
   AssetsAudioPlayer player;
   List<AssetsAudio> songs = [];
+  List<String> songNames = [];
   int current = -1;
+  Stream<bool> isPlayingStream;
 
   MusicPlayer() {
     this.player = new AssetsAudioPlayer();
-    this._initializeSongs();
+    this.songNames = this._getSongNames();
+    this.songs = this._initializeSongs();
+    this.isPlayingStream = this.player.isPlaying;
   }
 
-  _initializeSongs() {
-    for (var i = 1; i < 4; i++) {
-      songs.add(AssetsAudio(
-        asset: 'song$i.mp3',
-        folder: folderPath
-      ));
-    }
+  List<String> _getSongNames() {
+    return [
+      'song1.mp3',
+      'song2.mp3',
+      'song3.mp3'
+    ];
   }
 
-  playOrPause() {
+  List<AssetsAudio> _initializeSongs() {
+    var res = this.songNames.map<AssetsAudio>(
+            (name) =>
+                AssetsAudio(
+                    asset: name,
+                    folder: folderPath
+                )).toList();
+    print('res $res');
+    return res;
+  }
+
+  void playOrPause() {
     if (current == -1) {
       this.player.open(songs[0]);
+      this.current = 0;
     }
     this.player.playOrPause();
   }
 
-  next() {
+  void next() {
     int nextSong = (this.current + 1) % this.songs.length;
+    if (this.isPlaying()) {
       this.player.pause();
+    }
     this.player.open(this.songs[nextSong]);
     this.player.play();
+    this.current = nextSong;
   }
 
-  previous() {
+  void previous() {
     int previousSong =
         (this.current + this.songs.length - 1) % this.songs.length;
-    this.player.pause();
+    if (this.isPlaying()) {
+      this.player.pause();
+    }
     this.player.open(this.songs[previousSong]);
     this.player.play();
+    this.current = previousSong;
+  }
+
+  bool isPlaying() {
+    return !this.player.isPlaying.value;
+  }
+
+  String getSongTitle() {
+    if (current == -1) {
+      return '';
+    } else {
+      return this.songNames[current];
+    }
   }
 }

@@ -2,6 +2,7 @@ import 'dart:core';
 
 import 'package:esense/events/NodLeftEvent.dart';
 import 'package:esense/events/NodRightEvent.dart';
+import 'package:esense/music/playerWidget.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -38,7 +39,6 @@ class _MyAppState extends State<MyApp> {
     _connectToESense();
     this.eventBus = new EventBus();
     this.checkers = this.getCheckers();
-    this.registerListeners();
   }
 
   List<GenericChecker> getCheckers() {
@@ -46,11 +46,6 @@ class _MyAppState extends State<MyApp> {
       new NodLeftChecker(),
       new NodRightChecker()
     ];
-  }
-
-  void registerListeners() {
-    this.eventBus.on<NodLeftEvent>().listen((event)=> print('NodLeftEvent'));
-    this.eventBus.on<NodRightEvent>().listen((event) => print('NodRightEvent'));
   }
 
   Future<void> _connectToESense() async {
@@ -194,6 +189,9 @@ class _MyAppState extends State<MyApp> {
               Text('eSense Button Event: \t$_button'),
               Text(''),
               Text('$_event'),
+              PlayerWidget(
+                sensorBus: this.eventBus,
+              )
             ],
           ),
         ),
