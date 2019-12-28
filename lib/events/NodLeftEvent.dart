@@ -26,7 +26,7 @@ class NodLeftChecker implements GenericChecker {
   }
 
   @override
-   NodLeftEvent create() {
+   NodLeftEvent createEvent() {
     return new NodLeftEvent();
   }
 }

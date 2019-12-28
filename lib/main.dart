@@ -140,7 +140,7 @@ class _MyAppState extends State<MyApp> {
           this.changed == false
             && check.checkOccurrence(previousValue, event.gyro)
         ) {
-          this.eventBus.fire(check.create());
+          this.eventBus.fire(check.createEvent());
           setState(() {
             changed = true;
           });

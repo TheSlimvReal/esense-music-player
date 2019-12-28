@@ -26,7 +26,7 @@ class NodDownChecker implements GenericChecker {
   }
 
   @override
-  NodDownEvent create() {
+  NodDownEvent createEvent() {
     return new NodDownEvent();
   }
 }
