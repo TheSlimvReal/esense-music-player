@@ -1,5 +1,7 @@
 import 'dart:core';
 
+import 'package:esense/events/GenericEvent.dart';
+import 'package:esense/events/NodDownEvent.dart';
 import 'package:esense/events/NodLeftEvent.dart';
 import 'package:esense/events/NodRightEvent.dart';
 import 'package:esense/music/playerWidget.dart';
@@ -8,8 +10,6 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:esense_flutter/esense.dart';
-
-import 'Events/GenericEvent.dart';
 
 void main() => runApp(MyApp());
 
@@ -36,7 +36,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _connectToESense();
     this.eventBus = new EventBus();
     this.checkers = this.getCheckers();
   }
@@ -44,7 +43,8 @@ class _MyAppState extends State<MyApp> {
   List<GenericChecker> getCheckers() {
     return [
       new NodLeftChecker(),
-      new NodRightChecker()
+      new NodRightChecker(),
+      new NodDownChecker()
     ];
   }
 
@@ -144,7 +144,7 @@ class _MyAppState extends State<MyApp> {
           setState(() {
             changed = true;
           });
-          Timer(Duration(milliseconds: 1000), () => setState(() {
+          Timer(Duration(seconds: 2), () => setState(() {
             changed = false;
           }));
         }
@@ -178,6 +178,12 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('eSense Demo App'),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: this._connectToESense,
+              child: Text('Connect Earables'),
+            )
+          ],
         ),
         body: Align(
           alignment: Alignment.topLeft,

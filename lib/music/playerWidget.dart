@@ -1,3 +1,4 @@
+import 'package:esense/events/NodDownEvent.dart';
 import 'package:esense/events/NodLeftEvent.dart';
 import 'package:esense/events/NodRightEvent.dart';
 import 'package:event_bus/event_bus.dart';
@@ -40,6 +41,7 @@ class PlayerWidgetState extends State<PlayerWidget> {
   void _registerSensorListeners() {
     this.sensorBus.on<NodLeftEvent>().listen((event)=> this.player.previous());
     this.sensorBus.on<NodRightEvent>().listen((event) => this.player.next());
+    this.sensorBus.on<NodDownEvent>().listen((event) => this.player.playOrPause());
   }
 
   @override

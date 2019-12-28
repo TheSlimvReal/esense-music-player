@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:esense/Events/GenericEvent.dart';
+import 'package:esense/events/GenericEvent.dart';
 
 class NodRightEvent implements GenericEvent {}
 
@@ -9,7 +9,7 @@ class NodRightChecker implements GenericChecker {
 
   @override
   bool checkOccurrence(List<int> oldGyro, List<int> newGyro) {
-    if (oldGyro[1] - newGyro[1] > 5000) {
+    if (oldGyro[1] - newGyro[1] > 4000) {
       print('first right ${oldGyro[1] - newGyro[1]}');
       this.moveRightDetected = true;
       Timer(Duration(milliseconds: 500), () {
@@ -17,7 +17,7 @@ class NodRightChecker implements GenericChecker {
         print('reset timer right');
       });
       return false;
-    } else if (this.moveRightDetected && oldGyro[1] - newGyro[1] < -5000) {
+    } else if (this.moveRightDetected && oldGyro[1] - newGyro[1] < -6000) {
       print('second right  ${oldGyro[1] - newGyro[1]}');
       this.moveRightDetected = false;
       return true;
