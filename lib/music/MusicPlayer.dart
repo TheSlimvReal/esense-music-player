@@ -30,8 +30,7 @@ class MusicPlayer {
                     asset: name,
                     folder: folderPath
                 )).toList();
-    print('res $res');
-    return res;
+     return res;
   }
 
   void playOrPause() {
