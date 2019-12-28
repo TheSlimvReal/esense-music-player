@@ -96,7 +96,7 @@ class _MyAppState extends State<MyApp> {
             _deviceName = (event as DeviceNameRead).deviceName;
             break;
           case BatteryRead:
-            _voltage = (event as BatteryRead).voltage;
+//            _voltage = (event as BatteryRead).voltage;
             break;
           case ButtonEventChanged:
             _button = (event as ButtonEventChanged).pressed ? 'pressed' : 'not pressed';
