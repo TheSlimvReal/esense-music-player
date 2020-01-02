@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:esense/events/NodDownEvent.dart';
 import 'package:esense/events/NodLeftEvent.dart';
 import 'package:esense/events/NodRightEvent.dart';
@@ -13,7 +15,7 @@ class PlayerWidget extends StatefulWidget {
   @override
   State createState() => PlayerWidgetState(
       eSense: this.eSense,
-      connectedBus:this.connectedBus);
+      connectedBus: this.connectedBus);
 
   final ESense eSense;
   final connectedBus;
@@ -25,6 +27,8 @@ class PlayerWidgetState extends State<PlayerWidget> {
   bool playing = false;
   ESense eSense;
   EventBus connectedBus;
+  bool changing = false;
+  bool listeningToGestures = false;
 
   PlayerWidgetState({this.eSense, this.connectedBus});
 
@@ -50,14 +54,23 @@ class PlayerWidgetState extends State<PlayerWidget> {
     this._registerSensorListeners();
     this.eSense.registerButtonChangedHandler((event) {
       print('called $event');
-      if ((event as ButtonEventChanged).pressed) {
+      if (!this.changing && (event as ButtonEventChanged).pressed) {
         if (this.eSense.listening) {
           print('stop listening');
+          setState(() {
+            listeningToGestures = false;
+          });
           this.eSense.stopListenToSensorEvents();
+          this.showSnackBar('Stopped listening to gestures');
         } else {
-          print('start listening');
+          setState(() {
+            listeningToGestures = true;
+          });
           this.eSense.startListenToSensorEvents();
+          this.showSnackBar('Started listening to gestures');
         }
+        this.changing = true;
+        Timer(Duration(seconds: 1), () => this.changing = false);
       }
     });
   }
@@ -77,11 +90,20 @@ class PlayerWidgetState extends State<PlayerWidget> {
         .listen((event) => this.player.playOrPause());
   }
 
+  void showSnackBar(String text) {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(text),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
+        Text(
+            'Gesture controll: '
+                '${this.listeningToGestures ? 'active' : 'not activ'}'),
         Text(this.player.getSongTitle()),
         ButtonBar(
           alignment: MainAxisAlignment.center,

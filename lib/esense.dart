@@ -6,13 +6,13 @@ import 'package:event_bus/event_bus.dart';
 
 class ESense {
   String eSenseName;
-  ConnectionType status = ConnectionType.unknown;
   bool listening = false;
 
   Map<Type, List<Function>> eSenseHandlers = {};
   List<GenericChecker> eventCheckers = [];
   bool checked = false;
   StreamSubscription sensorSubscription;
+  StreamSubscription eSenseSubscription;
   EventBus sensorEventBus = new EventBus();
 
   Future<ConnectionEvent> connectToESense({String name = 'eSense-0708'}) {
@@ -33,8 +33,22 @@ class ESense {
     return resultFuture;
   }
 
+  Future<ConnectionEvent> disconnectFromESense() {
+    var resultFuture =  ESenseManager.connectionEvents.firstWhere((event) {
+
+      // when we're connected to the eSense device, we can start listening to events from it
+      if (event.type == ConnectionType.disconnected) {
+        this.eSenseSubscription.cancel();
+        return true;
+      }
+      return false;
+    });
+    ESenseManager.disconnect();
+    return resultFuture;
+  }
+
   void _listenToESenseEvents() {
-    ESenseManager.eSenseEvents.listen((event) {
+    this.eSenseSubscription = ESenseManager.eSenseEvents.listen((event) {
       if (this.eSenseHandlers.containsKey(event.runtimeType)) {
         this.eSenseHandlers[event.runtimeType].forEach((fun) => fun(event));
       }
