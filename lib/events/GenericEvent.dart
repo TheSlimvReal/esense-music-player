@@ -1,5 +1,7 @@
+import 'package:esense_flutter/esense.dart';
+
 abstract class GenericChecker{
-  bool checkOccurrence(List<int> oldGyro, List<int> newGyro) => false;
+  bool checkOccurrence(SensorEvent newEvent) => false;
   GenericEvent createEvent() => null;
 }
 

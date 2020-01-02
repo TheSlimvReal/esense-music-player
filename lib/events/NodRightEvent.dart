@@ -1,28 +1,18 @@
-import 'dart:async';
-
 import 'package:esense/events/GenericEvent.dart';
+import 'package:esense/events/TwoStateChecker.dart';
+import 'package:esense_flutter/esense.dart';
 
 class NodRightEvent implements GenericEvent {}
 
-class NodRightChecker implements GenericChecker {
-  bool moveRightDetected = false;
+class NodRightChecker extends TwoStateChecker {
+  @override
+  bool checkFirstState(SensorEvent oldEvent, SensorEvent newEvent) {
+    return oldEvent.gyro[1] - newEvent.gyro[1] > 4000;
+  }
 
   @override
-  bool checkOccurrence(List<int> oldGyro, List<int> newGyro) {
-    if (oldGyro[1] - newGyro[1] > 4000) {
-      print('first right ${oldGyro[1] - newGyro[1]}');
-      this.moveRightDetected = true;
-      Timer(Duration(milliseconds: 500), () {
-        this.moveRightDetected = false;
-        print('reset timer right');
-      });
-      return false;
-    } else if (this.moveRightDetected && oldGyro[1] - newGyro[1] < -6000) {
-      print('second right  ${oldGyro[1] - newGyro[1]}');
-      this.moveRightDetected = false;
-      return true;
-    }
-    return false;
+  bool checkSecondState(SensorEvent oldEvent, SensorEvent newEvent) {
+    return oldEvent.gyro[1] - newEvent.gyro[1] < -6000;
   }
 
   @override

@@ -43,8 +43,13 @@ class ESense {
   void startListenToSensorEvents() {
     this.sensorSubscription = ESenseManager.sensorEvents.listen((event) {
       for (var check in this.eventCheckers) {
+        if (!this.checked && check.checkOccurrence(event))
       }
-    })
+    });
+  }
+
+  void stopListenToSensorEvents() {
+    this.sensorSubscription.cancel();
   }
 
   void registerESenseHandler(Type type, Function func) {
