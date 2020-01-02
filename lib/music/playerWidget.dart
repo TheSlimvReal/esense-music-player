@@ -1,27 +1,32 @@
 import 'package:esense/events/NodDownEvent.dart';
 import 'package:esense/events/NodLeftEvent.dart';
 import 'package:esense/events/NodRightEvent.dart';
+import 'package:esense_flutter/esense.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
 
+import '../esense.dart';
 import 'MusicPlayer.dart';
 
 class PlayerWidget extends StatefulWidget {
 
   @override
-  State createState() => PlayerWidgetState(sensorBus: sensorBus);
+  State createState() => PlayerWidgetState(
+      eSense: this.eSense,
+      connectedBus:this.connectedBus);
 
-  final EventBus sensorBus;
-  PlayerWidget({this.sensorBus});
+  final ESense eSense;
+  final connectedBus;
+  PlayerWidget({this.eSense, this.connectedBus});
 }
 
 class PlayerWidgetState extends State<PlayerWidget> {
   MusicPlayer player;
   bool playing = false;
-  EventBus sensorBus;
+  ESense eSense;
+  EventBus connectedBus;
 
-
-  PlayerWidgetState({this.sensorBus});
+  PlayerWidgetState({this.eSense, this.connectedBus});
 
   @override
   void initState() {
@@ -33,15 +38,43 @@ class PlayerWidgetState extends State<PlayerWidget> {
                 playing = res;
               })
     );
-    if (this.sensorBus != null) {
-      this._registerSensorListeners();
-    }
+    this.connectedBus.on().listen((event) {
+      if (event.type == ConnectionType.connected) {
+        this._setupESense();
+      }
+    });
+  }
+
+  void _setupESense() {
+    this._registerSensorCheckers();
+    this._registerSensorListeners();
+    this.eSense.registerButtonChangedHandler((event) {
+      print('called $event');
+      if ((event as ButtonEventChanged).pressed) {
+        if (this.eSense.listening) {
+          print('stop listening');
+          this.eSense.stopListenToSensorEvents();
+        } else {
+          print('start listening');
+          this.eSense.startListenToSensorEvents();
+        }
+      }
+    });
+  }
+
+  void _registerSensorCheckers() {
+    this.eSense.registerSensorEventCheck(new NodLeftChecker());
+    this.eSense.registerSensorEventCheck(new NodDownChecker());
+    this.eSense.registerSensorEventCheck(new NodRightChecker());
   }
 
   void _registerSensorListeners() {
-    this.sensorBus.on<NodLeftEvent>().listen((event)=> this.player.previous());
-    this.sensorBus.on<NodRightEvent>().listen((event) => this.player.next());
-    this.sensorBus.on<NodDownEvent>().listen((event) => this.player.playOrPause());
+    this.eSense.sensorEventBus.on<NodLeftEvent>()
+        .listen((event) => this.player.previous());
+    this.eSense.sensorEventBus.on<NodRightEvent>()
+        .listen((event) => this.player.next());
+    this.eSense.sensorEventBus.on<NodDownEvent>()
+        .listen((event) => this.player.playOrPause());
   }
 
   @override
