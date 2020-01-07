@@ -12,6 +12,8 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 }
 
+// TODO: create list with available songs that shows current playing
+
 class _MyAppState extends State<MyApp> {
 
   // the name of the eSense device to connect to -- change this to your own device.
