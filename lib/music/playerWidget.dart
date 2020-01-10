@@ -15,11 +15,13 @@ class PlayerWidget extends StatefulWidget {
   @override
   State createState() => PlayerWidgetState(
       eSense: this.eSense,
-      connectedBus: this.connectedBus);
+      connectedBus: this.connectedBus,
+      player: this.player);
 
   final ESense eSense;
   final connectedBus;
-  PlayerWidget({this.eSense, this.connectedBus});
+  final player;
+  PlayerWidget({this.eSense, this.connectedBus, this.player});
 }
 
 class PlayerWidgetState extends State<PlayerWidget> {
@@ -30,12 +32,11 @@ class PlayerWidgetState extends State<PlayerWidget> {
   bool changing = false;
   bool listeningToGestures = false;
 
-  PlayerWidgetState({this.eSense, this.connectedBus});
+  PlayerWidgetState({this.eSense, this.connectedBus, this.player});
 
   @override
   void initState() {
     super.initState();
-    this.player = MusicPlayer();
     this.player.isPlayingStream.listen(
             (res) =>
               setState(() {
@@ -98,33 +99,37 @@ class PlayerWidgetState extends State<PlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text(
-            'Gesture controll: '
-                '${this.listeningToGestures ? 'active' : 'not activ'}'),
-        Text(this.player.getSongTitle()),
-        ButtonBar(
-          alignment: MainAxisAlignment.center,
-          children: <Widget>[
-            FlatButton(
-              onPressed: this.player.previous,
-              child: Icon(Icons.skip_previous),
-            ),
-            FlatButton(
-              onPressed: this.player.playOrPause,
-              child: this.playing
-                  ? Icon(Icons.pause)
-                  : Icon(Icons.play_arrow),
-            ),
-            FlatButton(
-              onPressed: this.player.next,
-              child: Icon(Icons.skip_next)
-            )
-          ],
-        ),
-      ],
+    return Container(
+      height: 96,
+      child: Column(
+
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+              'Gesture controll: '
+                  '${this.listeningToGestures ? 'active' : 'not active'}'),
+          Text(this.player.getSongTitle()),
+          ButtonBar(
+            alignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FlatButton(
+                onPressed: this.player.previous,
+                child: Icon(Icons.skip_previous),
+              ),
+              FlatButton(
+                onPressed: this.player.playOrPause,
+                child: this.playing
+                    ? Icon(Icons.pause)
+                    : Icon(Icons.play_arrow),
+              ),
+              FlatButton(
+                onPressed: this.player.next,
+                child: Icon(Icons.skip_next)
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

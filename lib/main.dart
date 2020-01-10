@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:esense/esense.dart';
+import 'package:esense/music/MusicPlayer.dart';
 import 'package:esense/music/playerWidget.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
@@ -21,10 +22,12 @@ class _MyAppState extends State<MyApp> {
   ESense eSense;
   EventBus connectedBus;
   String state = 'disconnected';
+  MusicPlayer player;
 
   @override
   void initState() {
     super.initState();
+    this.player = MusicPlayer();
     this.eSense = new ESense();
     this.connectedBus = new EventBus();
     this.state = 'disconnected';
@@ -100,6 +103,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget build(BuildContext context) {
+    final List<String> entries = <String>['A', 'B', 'C'];
+    final List<int> colorCodes = <int>[600, 500, 100];
     return Scaffold(
       appBar: AppBar(
         title: const Text('ESense extended Music Player'),
@@ -109,15 +114,28 @@ class _MyAppState extends State<MyApp> {
       ),
       body: Align(
         alignment: Alignment.topLeft,
-        child: ListView(
-          children: [
-            PlayerWidget(
-              eSense: this.eSense,
-              connectedBus: this.connectedBus,
-            )
-          ],
+        child: ListView.separated(
+          padding: const EdgeInsets.all(8),
+          itemCount: this.player.songNames.length,
+          itemBuilder: (BuildContext context, int index) {
+            return InkWell(
+              onTap: () => this.player.playSong(index),
+              child: Container(
+                height: 30,
+                child: Center(
+                    child: Text('${this.player.songNames[index]}')),
+
+              )
+            );
+          },
+          separatorBuilder: (BuildContext context, int index) => const Divider(),
         ),
       ),
+      bottomNavigationBar: PlayerWidget(
+        eSense: this.eSense,
+        connectedBus: this.connectedBus,
+        player: this.player,
+      )
     );
   }
 }
