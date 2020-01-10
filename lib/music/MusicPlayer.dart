@@ -17,9 +17,19 @@ class MusicPlayer {
 
   List<String> _getSongNames() {
     return [
-      'song1.mp3',
-      'song2.mp3',
-      'song3.mp3'
+      '01 - 25.mp3',
+      '02 - Heute.mp3',
+      '03 - Und Los.mp3',
+      '04 - Lass Sehen.mp3',
+      '05 - Gegen Jede Vernunft.mp3',
+      '06 - Typisch Ich.mp3',
+      '07 - Wie Geliebt.mp3',
+      '08 - Single.mp3',
+      '09 - Disco.mp3',
+      '10 - Der Mann Den Nichts Bewegt.mp3',
+      '11 - Frieden Wie Denn.mp3',
+      '12 - Gott Ist Mein Zeuge.mp3',
+      '13 - Das Spiel Ist Aus.mp3'
     ];
   }
 
@@ -43,9 +53,7 @@ class MusicPlayer {
 
   void next() {
     int nextSong = (this.current + 1) % this.songs.length;
-    if (this.isPlaying()) {
-      this.player.pause();
-    }
+    this.pauseIfPlaying();
     this.player.open(this.songs[nextSong]);
     this.player.play();
     this.current = nextSong;
@@ -54,12 +62,19 @@ class MusicPlayer {
   void previous() {
     int previousSong =
         (this.current + this.songs.length - 1) % this.songs.length;
-    if (this.isPlaying()) {
-      this.player.pause();
-    }
+    this.pauseIfPlaying();
     this.player.open(this.songs[previousSong]);
     this.player.play();
     this.current = previousSong;
+  }
+
+  void playSong(int songNumber) {
+    if (this.current != songNumber) {
+      this.pauseIfPlaying();
+      this.current = songNumber;
+      this.player.open(this.songs[songNumber]);
+      this.player.play();
+    }
   }
 
   bool isPlaying() {
@@ -71,6 +86,12 @@ class MusicPlayer {
       return '';
     } else {
       return this.songNames[current];
+    }
+  }
+
+  void pauseIfPlaying() {
+    if (this.isPlaying()) {
+      this.player.pause();
     }
   }
 }
