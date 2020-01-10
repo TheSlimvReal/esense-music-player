@@ -1,4 +1,5 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:event_bus/event_bus.dart';
 
 class MusicPlayer {
   final String folderPath = 'assets/';
@@ -7,8 +8,9 @@ class MusicPlayer {
   List<String> songNames = [];
   int current = -1;
   Stream<bool> isPlayingStream;
+  EventBus songChangedBus;
 
-  MusicPlayer() {
+  MusicPlayer({this.songChangedBus}) {
     this.player = new AssetsAudioPlayer();
     this.songNames = this._getSongNames();
     this.songs = this._initializeSongs();
@@ -44,9 +46,8 @@ class MusicPlayer {
   }
 
   void playOrPause() {
-    if (current == -1) {
-      this.player.open(songs[0]);
-      this.current = 0;
+    if (this.current == -1) {
+      this.selectSong(this.current);
     }
     this.player.playOrPause();
   }
@@ -54,25 +55,22 @@ class MusicPlayer {
   void next() {
     int nextSong = (this.current + 1) % this.songs.length;
     this.pauseIfPlaying();
-    this.player.open(this.songs[nextSong]);
+    this.selectSong(nextSong);
     this.player.play();
-    this.current = nextSong;
   }
 
   void previous() {
     int previousSong =
         (this.current + this.songs.length - 1) % this.songs.length;
     this.pauseIfPlaying();
-    this.player.open(this.songs[previousSong]);
+    this.selectSong(previousSong);
     this.player.play();
-    this.current = previousSong;
   }
 
   void playSong(int songNumber) {
     if (this.current != songNumber) {
       this.pauseIfPlaying();
-      this.current = songNumber;
-      this.player.open(this.songs[songNumber]);
+      this.selectSong(songNumber);
       this.player.play();
     }
   }
@@ -93,5 +91,11 @@ class MusicPlayer {
     if (this.isPlaying()) {
       this.player.pause();
     }
+  }
+
+  void selectSong(int number) {
+    this.current = number;
+    this.player.open(this.songs[number]);
+    this.songChangedBus.fire(number);
   }
 }

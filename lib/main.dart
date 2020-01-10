@@ -23,14 +23,21 @@ class _MyAppState extends State<MyApp> {
   EventBus connectedBus;
   String state = 'disconnected';
   MusicPlayer player;
+  EventBus songChangedBus;
+  int currentSong = -1;
 
   @override
   void initState() {
     super.initState();
-    this.player = MusicPlayer();
+    this.songChangedBus = new EventBus();
+    this.player = MusicPlayer(songChangedBus: this.songChangedBus);
     this.eSense = new ESense();
     this.connectedBus = new EventBus();
     this.state = 'disconnected';
+    this.songChangedBus.on()
+        .listen((current) => setState(() {
+          currentSong = current;
+        }));
   }
 
   void connectESense({String name = ''}) {
@@ -103,11 +110,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget build(BuildContext context) {
-    final List<String> entries = <String>['A', 'B', 'C'];
-    final List<int> colorCodes = <int>[600, 500, 100];
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ESense extended Music Player'),
+        title: const Text('Music'),
         actions: <Widget>[
           this.createConnectionButton(context),
         ],
@@ -123,8 +128,11 @@ class _MyAppState extends State<MyApp> {
               child: Container(
                 height: 30,
                 child: Center(
-                    child: Text('${this.player.songNames[index]}')),
-
+                    child: Text(
+                        '${this.player.songNames[index]}',
+                        style: TextStyle(color: this.currentSong == index
+                            ? Colors.blue : Colors.black)
+                    )),
               )
             );
           },
