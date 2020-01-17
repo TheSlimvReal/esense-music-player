@@ -16,7 +16,8 @@ class PlayerWidget extends StatefulWidget {
   State createState() => PlayerWidgetState(
       eSense: this.eSense,
       connectedBus: this.connectedBus,
-      player: this.player);
+      player: this.player,
+  );
 
   final ESense eSense;
   final connectedBus;
@@ -30,7 +31,6 @@ class PlayerWidgetState extends State<PlayerWidget> {
   ESense eSense;
   EventBus connectedBus;
   bool changing = false;
-  bool listeningToGestures = false;
 
   PlayerWidgetState({this.eSense, this.connectedBus, this.player});
 
@@ -58,15 +58,9 @@ class PlayerWidgetState extends State<PlayerWidget> {
       if (!this.changing && (event as ButtonEventChanged).pressed) {
         if (this.eSense.listening) {
           print('stop listening');
-          setState(() {
-            listeningToGestures = false;
-          });
           this.eSense.stopListenToSensorEvents();
           this.showSnackBar('Stopped listening to gestures');
         } else {
-          setState(() {
-            listeningToGestures = true;
-          });
           this.eSense.startListenToSensorEvents();
           this.showSnackBar('Started listening to gestures');
         }
@@ -105,10 +99,11 @@ class PlayerWidgetState extends State<PlayerWidget> {
 
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          Divider(),
           Text(
-              'Gesture controll: '
-                  '${this.listeningToGestures ? 'active' : 'not active'}'),
-          Text(this.player.getSongTitle()),
+            this.player.getSongTitle(),
+            maxLines: 1,
+          ),
           ButtonBar(
             alignment: MainAxisAlignment.center,
             children: <Widget>[

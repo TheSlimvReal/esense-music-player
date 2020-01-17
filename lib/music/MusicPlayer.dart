@@ -19,19 +19,28 @@ class MusicPlayer {
 
   List<String> _getSongNames() {
     return [
-      '01 - 25.mp3',
-      '02 - Heute.mp3',
-      '03 - Und Los.mp3',
-      '04 - Lass Sehen.mp3',
-      '05 - Gegen Jede Vernunft.mp3',
-      '06 - Typisch Ich.mp3',
-      '07 - Wie Geliebt.mp3',
-      '08 - Single.mp3',
-      '09 - Disco.mp3',
-      '10 - Der Mann Den Nichts Bewegt.mp3',
-      '11 - Frieden Wie Denn.mp3',
-      '12 - Gott Ist Mein Zeuge.mp3',
-      '13 - Das Spiel Ist Aus.mp3'
+      '00. Kygo - Piano Jam.mp3',
+      '01. Lost Frequencie - Reality.mp3',
+      '02. Cro - Bye Bye (MTV Unplugged).mp3',
+      '03. Robin Schulz - Sugar (feat. Francesco Yates).mp3',
+      '04. Anna Naklab - Supergirl (feat. Alle Farben & Younotus).mp3',
+      '05. Felix Jaehn - Ain\'t Nobody (Loves Me Better) (feat. Jasmine '
+          'Thompson).mp3',
+      '06. Kygo - Stole The Show (feat. Parson James).mp3',
+      '07. Gestört Aber GeiL & Koby Funk - Unter meiner Haut.mp3',
+      '08. Ed Sheeran - Photograph.mp3',
+      '09. Major Lazer & DJ Snake - Lean On (feat. MØ).mp3',
+      '10. Avicii - Waiting For Love.mp3',
+      '11. Sarah Connor - Wie Schön Du Bist.mp3',
+      '12. Feder - Goodbye (feat. Lyse) [Radio Edit].mp3',
+      '13. Jason Derulo - Want To Want Me.mp3',
+      '14. Martin Solveig & GTA - Intoxicated.mp3',
+      '15. David Guetta - Hey Mama (feat. Nicki Minaj & Afrojack).mp3',
+      '16. MoTrip - So wie du bist.mp3',
+      '17. Joris - Herz ber Kopf.mp3',
+      '18. Lost Frequencies - Are You With Me.mp3',
+      '19. Walk The Moon - Shut Up and Dance.mp3',
+      '20. DJ Antoine - Holiday (feat. Akon).mp3'
     ];
   }
 
@@ -47,7 +56,7 @@ class MusicPlayer {
 
   void playOrPause() {
     if (this.current == -1) {
-      this.selectSong(this.current);
+      this.selectSong(0);
     }
     this.player.playOrPause();
   }

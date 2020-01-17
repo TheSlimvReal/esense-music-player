@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:esense/events/GenericEvent.dart';
+import 'package:esense/events/SensorListenEvent.dart';
 import 'package:esense_flutter/esense.dart';
 import 'package:event_bus/event_bus.dart';
 
@@ -36,7 +37,6 @@ class ESense {
   Future<ConnectionEvent> disconnectFromESense() {
     var resultFuture =  ESenseManager.connectionEvents.firstWhere((event) {
 
-      // when we're connected to the eSense device, we can start listening to events from it
       if (event.type == ConnectionType.disconnected) {
         this.eSenseSubscription.cancel();
         return true;
@@ -61,6 +61,7 @@ class ESense {
 
   void startListenToSensorEvents() {
     this.listening = true;
+    this.sensorEventBus.fire(new StartListenToSensorEvent());
     this.sensorSubscription = ESenseManager.sensorEvents.listen((event) {
       for (var check in this.eventCheckers) {
         if (!this.checked && check.checkOccurrence(event)) {
@@ -75,6 +76,7 @@ class ESense {
   void stopListenToSensorEvents() {
     this.sensorSubscription.cancel();
     this.listening = false;
+    this.sensorEventBus.fire(new StopListenToSensorEvent());
   }
 
   void registerESenseHandler(Type type, Function func) {

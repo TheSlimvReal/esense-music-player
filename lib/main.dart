@@ -3,8 +3,11 @@ import 'dart:core';
 import 'package:esense/esense.dart';
 import 'package:esense/music/MusicPlayer.dart';
 import 'package:esense/music/playerWidget.dart';
+import 'package:esense/presentation/my_flutter_app_icons.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:flutter/material.dart';
+
+import 'events/SensorListenEvent.dart';
 
 void main() => runApp(new MaterialApp(home: MyApp()));
 
@@ -25,6 +28,7 @@ class _MyAppState extends State<MyApp> {
   MusicPlayer player;
   EventBus songChangedBus;
   int currentSong = -1;
+  bool listeningToGestures = false;
 
   @override
   void initState() {
@@ -38,6 +42,14 @@ class _MyAppState extends State<MyApp> {
         .listen((current) => setState(() {
           currentSong = current;
         }));
+    this.eSense.sensorEventBus.on<StartListenToSensorEvent>()
+        .listen((_) => setState(() {
+      listeningToGestures = true;
+    }));
+    this.eSense.sensorEventBus.on<StopListenToSensorEvent>()
+        .listen((_) => setState(() {
+      listeningToGestures = false;
+    }));
   }
 
   void connectESense({String name = ''}) {
@@ -58,6 +70,7 @@ class _MyAppState extends State<MyApp> {
         .then((event) {
           setState(() {
             state = 'disconnected';
+            listeningToGestures = false;
           });
     });
   }
@@ -67,16 +80,43 @@ class _MyAppState extends State<MyApp> {
     if (this.state == 'connected') {
       content = FlatButton(
         onPressed: this.disconnectESense,
-        child: Text('Disconnect', style: TextStyle(color: Colors.white),),
+        child: Icon(Icons.bluetooth_disabled, color: Colors.white,),
       );
     } else if (this.state == 'disconnected') {
       content = FlatButton(
         onPressed: () => this.deviceNameDialog(context),
-        child: Text('Connect', style: TextStyle(color: Colors.white),),
+        child: Icon(Icons.bluetooth_connected, color: Colors.white,),
       );
     } else if (this.state == 'connecting') {
-      content = CircularProgressIndicator(backgroundColor: Colors.white,);
+      content = FlatButton(
+        onPressed: () => {},
+        child: CircularProgressIndicator(backgroundColor: Colors.white,),
+      );    }
+    return content;
+  }
+
+  Widget createGestureButton(BuildContext context) {
+    FlatButton button;
+    if (this.listeningToGestures == true) {
+      button = FlatButton(
+        onPressed: this.eSense.stopListenToSensorEvents,
+        child: Container(
+          child: Icon(MyFlutterApp.voice_over_off, color: Colors.blue,),
+          color: Colors.white,
+
+        ),
+
+      );
+    } else if (this.listeningToGestures == false) {
+      button = FlatButton(
+        onPressed: this.eSense.startListenToSensorEvents,
+        child: Icon(Icons.record_voice_over, color: Colors.white,),
+      );
     }
+    Widget content = Visibility(
+      child: button,
+      visible: this.state == 'connected',
+    );
     return content;
   }
 
@@ -114,6 +154,7 @@ class _MyAppState extends State<MyApp> {
       appBar: AppBar(
         title: const Text('Music'),
         actions: <Widget>[
+          this.createGestureButton(context),
           this.createConnectionButton(context),
         ],
       ),
@@ -131,7 +172,8 @@ class _MyAppState extends State<MyApp> {
                     child: Text(
                         '${this.player.songNames[index]}',
                         style: TextStyle(color: this.currentSong == index
-                            ? Colors.blue : Colors.black)
+                            ? Colors.blue : Colors.black),
+                        maxLines: 1,
                     )),
               )
             );
