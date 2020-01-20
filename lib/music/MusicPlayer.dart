@@ -19,28 +19,10 @@ class MusicPlayer {
 
   List<String> _getSongNames() {
     return [
-      '00. Kygo - Piano Jam.mp3',
-      '01. Lost Frequencie - Reality.mp3',
-      '02. Cro - Bye Bye (MTV Unplugged).mp3',
-      '03. Robin Schulz - Sugar (feat. Francesco Yates).mp3',
-      '04. Anna Naklab - Supergirl (feat. Alle Farben & Younotus).mp3',
-      '05. Felix Jaehn - Ain\'t Nobody (Loves Me Better) (feat. Jasmine '
-          'Thompson).mp3',
-      '06. Kygo - Stole The Show (feat. Parson James).mp3',
-      '07. Gestört Aber GeiL & Koby Funk - Unter meiner Haut.mp3',
-      '08. Ed Sheeran - Photograph.mp3',
-      '09. Major Lazer & DJ Snake - Lean On (feat. MØ).mp3',
-      '10. Avicii - Waiting For Love.mp3',
-      '11. Sarah Connor - Wie Schön Du Bist.mp3',
-      '12. Feder - Goodbye (feat. Lyse) [Radio Edit].mp3',
-      '13. Jason Derulo - Want To Want Me.mp3',
-      '14. Martin Solveig & GTA - Intoxicated.mp3',
-      '15. David Guetta - Hey Mama (feat. Nicki Minaj & Afrojack).mp3',
-      '16. MoTrip - So wie du bist.mp3',
-      '17. Joris - Herz ber Kopf.mp3',
-      '18. Lost Frequencies - Are You With Me.mp3',
-      '19. Walk The Moon - Shut Up and Dance.mp3',
-      '20. DJ Antoine - Holiday (feat. Akon).mp3'
+//    Specify the names of the songs here
+//    e.g.:
+//      'my-song.mp3',
+//      'another-song.mp3'
     ];
   }
 

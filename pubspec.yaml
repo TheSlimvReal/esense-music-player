@@ -52,6 +52,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+#    Paste your songs into the assets folder and add the full names of each mp3 into the MusicPlayer.dart file.
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
 
